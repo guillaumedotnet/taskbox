@@ -15,6 +15,13 @@ const meta = {
   tags: ["autodocs"],
   //👇 Our exports that end in "Data" are not stories.
   excludeStories: /.*Data$/,
+  decorators: [
+    (Story) => (
+      <ul>
+        <Story />
+      </ul>
+    ),
+  ],
   args: {
     ...ActionsData,
   },
