@@ -1,20 +1,14 @@
 import Task from "./task";
 import { TaskData } from "../types";
-import { PlusIcon } from "@heroicons/react/20/solid";
-import {
-  AppDispatch,
-  RootState,
-  updateTaskState,
-  createTaskState,
-} from "../lib/store";
+import { AppDispatch, RootState, updateTaskState } from "../lib/store";
 import { useDispatch, useSelector } from "react-redux";
+import { CheckCircleIcon } from "@heroicons/react/24/outline";
 
 export interface TaskListProps {
   loading?: boolean;
   tasks: TaskData[];
   onPinTask: (id: string) => void;
   onArchiveTask: (id: string) => void;
-  onCreateTask?: () => void;
 }
 
 export default function TaskList() {
@@ -36,11 +30,6 @@ export default function TaskList() {
   const archiveTask = (value: string) => {
     dispatch(updateTaskState({ id: value, newTaskState: "TASK_ARCHIVED" }));
   };
-  const createTask = () => {
-    dispatch(
-      createTaskState({ id: "1", title: "New Task", state: "TASK_INBOX" })
-    );
-  };
 
   const loadingRow = (
     <li className="px-6 py-4">
@@ -57,7 +46,7 @@ export default function TaskList() {
   if (status === "loading") {
     return (
       <div
-        className="overflow-hidden rounded-md bg-white shadow-sm"
+        className="overflow-hidden bg-white shadow-sm"
         data-testid="loading"
         aria-label="loading tasks"
       >
@@ -76,40 +65,16 @@ export default function TaskList() {
   if (tasks.length === 0) {
     return (
       <div
-        className="overflow-hidden rounded-md bg-white p-8 shadow-sm"
+        className="overflow-hidden bg-white p-8 shadow-sm"
         data-testid="empty"
         aria-label="empty tasks"
       >
         <div className="text-center">
-          <svg
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            aria-hidden="true"
-            className="mx-auto size-12 text-gray-400"
-          >
-            <path
-              d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"
-              strokeWidth={2}
-              vectorEffect="non-scaling-stroke"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
+          <CheckCircleIcon className="mx-auto size-12 text-gray-400" />
           <h3 className="mt-2 text-sm font-semibold text-gray-900">No tasks</h3>
           <p className="mt-1 text-sm text-gray-500">
-            Get started by creating a new task.
+            You can relax, you have no tasks.
           </p>
-          <div className="mt-6">
-            <button
-              type="button"
-              onClick={createTask}
-              className="inline-flex items-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
-            >
-              <PlusIcon aria-hidden="true" className="mr-1.5 -ml-0.5 size-5" />
-              New Task
-            </button>
-          </div>
         </div>
       </div>
     );
@@ -117,7 +82,7 @@ export default function TaskList() {
 
   return (
     <div
-      className="overflow-hidden rounded-md bg-white shadow-sm"
+      className="overflow-hidden bg-white shadow-sm"
       data-testid="success"
       aria-label="tasks"
     >

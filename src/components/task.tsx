@@ -24,11 +24,11 @@ export default function Task({
       }`}
     >
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4 min-w-0 flex-1">
           <button
             onClick={() => onArchiveTask(id)}
             aria-label={state === "TASK_ARCHIVED" ? "unarchive" : "archive"}
-            className="focus:outline-none"
+            className="focus:outline-none flex-shrink-0"
           >
             {state === "TASK_ARCHIVED" ? (
               <CheckCircleIcon className="h-6 w-6 text-blue-500" />
@@ -38,11 +38,12 @@ export default function Task({
           </button>
 
           <span
-            className={`text-sm font-medium ${
+            className={`text-sm font-medium truncate overflow-hidden ${
               state === "TASK_ARCHIVED"
                 ? "text-gray-500 line-through"
                 : "text-gray-900"
             }`}
+            title={title}
           >
             {title}
           </span>
@@ -51,7 +52,7 @@ export default function Task({
         <button
           onClick={() => onPinTask(id)}
           aria-label={state === "TASK_PINNED" ? "unpin" : "pin"}
-          className="focus:outline-none"
+          className="focus:outline-none flex-shrink-0 ml-2"
         >
           {state === "TASK_PINNED" ? (
             <StarIcon className="h-6 w-6 text-yellow-500" />

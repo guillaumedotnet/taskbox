@@ -2,7 +2,6 @@ import type { Meta, StoryObj } from "@storybook/react";
 
 import TaskList from "./task-list";
 import * as TaskStories from "./task.stories";
-import { fn } from "@storybook/test";
 import { TaskData } from "../types";
 import { Provider } from "react-redux";
 import { configureStore, createSlice } from "@reduxjs/toolkit";
@@ -51,15 +50,11 @@ const Mockstore = ({
   </Provider>
 );
 
-export const ActionsData = {
-  onCreateTask: fn(),
-};
-
 const meta = {
   component: TaskList,
   title: "TaskList",
   tags: ["autodocs"],
-  excludeStories: /.*MockedState$/,
+  excludeStories: /.*MockedState$|.*Data$/,
 } satisfies Meta<typeof TaskList>;
 
 export default meta;
