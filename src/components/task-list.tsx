@@ -1,6 +1,13 @@
 import Task from "./task";
 import { TaskData } from "../types";
 import { PlusIcon } from "@heroicons/react/20/solid";
+import {
+  AppDispatch,
+  RootState,
+  updateTaskState,
+  createTaskState,
+} from "../lib/store";
+import { useDispatch, useSelector } from "react-redux";
 
 export interface TaskListProps {
   loading?: boolean;
@@ -10,19 +17,44 @@ export interface TaskListProps {
   onCreateTask?: () => void;
 }
 
-export default function TaskList({
-  loading = false,
-  tasks,
-  onPinTask,
-  onArchiveTask,
-  onCreateTask = () => {},
-}: TaskListProps) {
-  const events = {
-    onPinTask,
-    onArchiveTask,
+export default function TaskList() {
+  const tasks = useSelector((state: RootState) => {
+    const tasksInOrder = [
+      ...state.taskbox.tasks.filter((t) => t.state === "TASK_PINNED"),
+      ...state.taskbox.tasks.filter((t) => t.state !== "TASK_PINNED"),
+    ];
+    const filteredTasks = tasksInOrder.filter(
+      (t) => t.state === "TASK_INBOX" || t.state === "TASK_PINNED"
+    );
+    return filteredTasks;
+  });
+  const { status } = useSelector((state: RootState) => state.taskbox);
+  const dispatch = useDispatch<AppDispatch>();
+  const pinTask = (value: string) => {
+    dispatch(updateTaskState({ id: value, newTaskState: "TASK_PINNED" }));
+  };
+  const archiveTask = (value: string) => {
+    dispatch(updateTaskState({ id: value, newTaskState: "TASK_ARCHIVED" }));
+  };
+  const createTask = () => {
+    dispatch(
+      createTaskState({ id: "1", title: "New Task", state: "TASK_INBOX" })
+    );
   };
 
-  if (loading) {
+  const loadingRow = (
+    <li className="px-6 py-4">
+      <div className="flex animate-pulse items-center justify-between">
+        <div className="flex items-center gap-4">
+          <div className="size-6 rounded-full bg-gray-200"></div>
+          <div className="h-4 w-32 rounded bg-gray-200"></div>
+        </div>
+        <div className="size-6 rounded-full bg-gray-200"></div>
+      </div>
+    </li>
+  );
+
+  if (status === "loading") {
     return (
       <div
         className="overflow-hidden rounded-md bg-white shadow-sm"
@@ -30,17 +62,12 @@ export default function TaskList({
         aria-label="loading tasks"
       >
         <ul role="list" className="divide-y divide-gray-200">
-          {[1, 2, 3].map((i) => (
-            <li key={i} className="px-6 py-4">
-              <div className="flex animate-pulse items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <div className="size-6 rounded-full bg-gray-200"></div>
-                  <div className="h-4 w-32 rounded bg-gray-200"></div>
-                </div>
-                <div className="size-6 rounded-full bg-gray-200"></div>
-              </div>
-            </li>
-          ))}
+          {loadingRow}
+          {loadingRow}
+          {loadingRow}
+          {loadingRow}
+          {loadingRow}
+          {loadingRow}
         </ul>
       </div>
     );
@@ -76,7 +103,7 @@ export default function TaskList({
           <div className="mt-6">
             <button
               type="button"
-              onClick={onCreateTask}
+              onClick={createTask}
               className="inline-flex items-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
             >
               <PlusIcon aria-hidden="true" className="mr-1.5 -ml-0.5 size-5" />
@@ -88,11 +115,6 @@ export default function TaskList({
     );
   }
 
-  const tasksInOrder = [
-    ...tasks.filter((t) => t.state === "TASK_PINNED"),
-    ...tasks.filter((t) => t.state !== "TASK_PINNED"),
-  ];
-
   return (
     <div
       className="overflow-hidden rounded-md bg-white shadow-sm"
@@ -100,8 +122,13 @@ export default function TaskList({
       aria-label="tasks"
     >
       <ul role="list" className="divide-y divide-gray-200">
-        {tasksInOrder.map((task) => (
-          <Task key={task.id} task={task} {...events} />
+        {tasks.map((task) => (
+          <Task
+            key={task.id}
+            task={task}
+            onPinTask={pinTask}
+            onArchiveTask={archiveTask}
+          />
         ))}
       </ul>
     </div>
